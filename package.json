@@ -1,18 +1,12 @@
 {
   "name": "vue-hive-test-library",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "type": "module",
   "files": [
     "dist"
   ],
   "main": "./dist/vue-hive-test-library.umd.js",
   "module": "./dist/vue-hive-test-library.es.js",
-  "exports": {
-    ".": {
-      "import": "./dist/vue-hive-test-library.es.js",
-      "require": "./dist/vue-hive-test-library.umd.js"
-    }
-  },
   "types": "./dist/types/index.d.ts",
   "typings": "./dist/types/index.d.ts",
   "repository": {
