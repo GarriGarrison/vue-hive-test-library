@@ -2,18 +2,18 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/vue-test-library.umd.js",
-  "module": "./dist/vue-test-library.es.js",
+  "main": "./dist/vue-hive-test-library.umd.js",
+  "module": "./dist/vue-hive-test-library.es.js",
   "exports": {
     ".": {
-      "import": "./dist/vue-test-library.es.js",
-      "require": "./dist/vue-test-library.umd.js"
+      "import": "./dist/vue-hive-test-library.es.js",
+      "require": "./dist/vue-hive-test-library.umd.js"
     }
   },
   "types": "./dist/types/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/GarriGarrison/vue-test-library"
+    "url": "https://github.com/GarriGarrison/vue-hive-test-library"
   },
   "scripts": {
     "dev": "vite",
@@ -24,7 +24,7 @@
     "preview": "vite preview",
     "test": "exit 0"
   },
-  "name": "vue-test-library",
+  "name": "vue-hive-test-library",
   "version": "0.0.1",
   "type": "module",
   "dependencies": {
