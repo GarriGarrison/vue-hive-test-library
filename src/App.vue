@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { BaseButton } from "./index";
+import { HiveButton } from '.';
 </script>
 
 <template>
-  <BaseButton> Click here too </BaseButton>
+  <hive-button>Click</hive-button>
 </template>
