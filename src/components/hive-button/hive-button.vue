@@ -31,10 +31,10 @@ const onClickRight = () => {
   <button
     class="button"
     :class="{ disabled: disabled }"
-    :style="style"
     :disabled="disabled"
     @click="onClickLeft"
     @click.right.prevent="onClickRight"
+    :style="style"
   >
     <slot name="before" />
     <slot>
