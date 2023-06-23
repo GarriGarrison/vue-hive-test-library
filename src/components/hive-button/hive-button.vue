@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { StyleValue } from 'vue';
 import { CommonProps } from '@/common/mixin/props';
+import { Click, onClick } from '@/common/mixin/emits';
 
 export interface HiveButtonProps extends CommonProps {
   title?: string;
@@ -13,27 +14,15 @@ withDefaults(defineProps<HiveButtonProps>(), {
   disabled: false,
 });
 
-const emit = defineEmits<{
-  (e: 'clickLeft'): void;
-  (e: 'clickRight'): void;
-}>();
-
-const onClickLeft = () => {
-  emit('clickLeft');
-};
-
-const onClickRight = () => {
-  emit('clickRight');
-};
+const emit = defineEmits<Click>();
 </script>
 
 <template>
   <button
-    class="button"
+    class="hive-button"
     :class="{ disabled: disabled }"
     :disabled="disabled"
-    @click="onClickLeft"
-    @click.right.prevent="onClickRight"
+    @click="onClick(emit, $event)"
     :style="style"
   >
     <slot name="before" />
@@ -45,44 +34,37 @@ const onClickRight = () => {
 </template>
 
 <style lang="scss" scoped>
-$bg-color: #f2f2f2;
-$bg-hover: #d3eafff5;
-$text-color: #3f3f3f;
-$border-color: #bfbfbf;
-$border-color-disabled: #bfbfbf7c;
-$border-radius: 5px;
-$border-width: 1px;
-$border-focus: #b2d6f8;
+@import '@/assets/variables.scss';
 
-.button {
+.hive-button {
+  cursor: pointer;
+  width: 100%;
   border: 1px solid transparent;
-  border-radius: $border-radius;
+  border-radius: var(--border-radius, $border-radius);
   text-rendering: auto;
   padding: 0.5rem 1rem;
   transition: background 0.2s;
-  border-color: $border-color;
-  background-color: $bg-color;
+  border-color: var(--border, $border);
+  background-color: var(--bg-button, $bg-button);
   font-size: 1rem;
-  color: $text-color;
-  cursor: pointer;
-  width: 100%;
+  color: var(--text);
 
   &:hover {
-    background: $bg-hover;
+    background: var(--bg-hover, $bg-hover);
   }
 
   &:focus,
   focus-visible {
-    outline: 1px auto $border-focus;
+    outline: 1px auto var(--border-focus, $border-focus);
   }
 
   &.disabled {
-    border-color: $border-color-disabled;
+    border-color: var(--border-disabled, $border-disabled);
     opacity: 0.4;
     pointer-events: none;
 
     &:hover {
-      background: $bg-color;
+      background: var(--bg-button, $bg-button);
     }
   }
 }

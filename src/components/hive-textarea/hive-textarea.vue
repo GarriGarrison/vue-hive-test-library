@@ -1,0 +1,76 @@
+<script lang="ts" setup>
+import { StyleValue, ref } from 'vue';
+import { CommonProps } from '@/common/mixin/props';
+import { Update } from '@/common/mixin/emits';
+import { useModelValue } from '@/common/hooks/use-model-value';
+
+export interface HiveTextariaProps extends CommonProps {
+  modelValue: string;
+  placeholder?: string;
+  rowsCount?: number;
+  resizable?: boolean;
+  resizeDirection?: 'both' | 'vertical' | 'horizontal';
+  style?: StyleValue;
+}
+
+const props = withDefaults(defineProps<HiveTextariaProps>(), {
+  modelValue: '',
+  placeholder: 'Введите текст...',
+  resizable: true,
+  resizeDirection: 'both',
+});
+
+const emit = defineEmits<Update<string>>();
+
+const currentValue = ref(props.modelValue);
+
+useModelValue(currentValue, emit);
+</script>
+
+<template>
+  <textarea
+    class="hive-textaria"
+    :class="[{ resizable: resizable }, resizeDirection]"
+    :value="modelValue"
+    @input="emit('update:modelValue', ($event.target as HTMLTextAreaElement)?.value)"
+    :placeholder="placeholder"
+    :rows="rowsCount"
+    :style="style"
+  />
+</template>
+
+<style lang="scss" scoped>
+@import '@/assets/variables.scss';
+
+.hive-textaria {
+  border: 1px solid transparent;
+  border-radius: var(--border-radius, $border-radius);
+  padding: 0.5rem 1rem;
+  transition: background 0.2s;
+  border-color: var(--border, $border);
+  background-color: var(--bg-input, $bg-input);
+  color: var(--text, $text);
+  resize: none;
+  transition: color 0.1s ease, border-color 0.1s ease;
+  font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+
+  &.resizable {
+    resize: vertical;
+    &.both {
+      resize: both;
+    }
+    &.vertical {
+      resize: vertical;
+    }
+    &.horizontal {
+      resize: horizontal;
+    }
+  }
+
+  &:focus,
+  focus-visible {
+    outline: 1px auto var(--border-focus, $border-focus);
+  }
+}
+</style>

@@ -13,25 +13,25 @@ withDefaults(defineProps<HiveLoaderProps>(), {
 </script>
 
 <template>
-  <div v-if="visible" class="loader__window" :style="style">
-    <div class="loader__wrapper">
+  <div v-if="visible" class="hive-loader__window" :style="style">
+    <div class="hive-loader__wrapper">
       <div :class="{ loader: visible }">
-        <span class="loader__size" />
-        <span class="loader__size" />
-        <span class="loader__size" />
-        <span class="loader__size" />
+        <span class="hive-loader__size" />
+        <span class="hive-loader__size" />
+        <span class="hive-loader__size" />
+        <span class="hive-loader__size" />
       </div>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-$bg-color-spinner: #b0ddffe5;
-$bg-color-window: rgba(38, 45, 52, 0.68);
-$span-size: 15px;
-$z-index: 1001;
+$loader-spinner: #b0ddffe5;
+$loader-window: rgba(38, 45, 52, 0.68);
+$loader-span-size: 15px;
+$loader-z: 1001;
 
-.loader {
+.hive-loader {
   &__window {
     position: absolute;
     top: 0;
@@ -39,9 +39,9 @@ $z-index: 1001;
     right: 0;
     bottom: 0;
     margin: auto;
-    background-color: $bg-color-window;
-    z-index: $z-index;
-    animation: view 1.0s infinite ease-in-out;
+    background-color: var(--loader-window, $loader-window);
+    z-index: var(--loader-z, $loader-z);
+    animation: view 1s infinite ease-in-out;
   }
 
   &__wrapper {
@@ -51,22 +51,22 @@ $z-index: 1001;
     right: 0;
     bottom: 0;
     margin: auto;
-    z-index: $z-index;
-    height: $span-size * 5.5;
-    width: $span-size * 5.5;
+    z-index: var(--loader-z, $loader-z);
+    height: var(--loader-span-size, $loader-span-size * 5.5);
+    width: var(--loader-span-size, $loader-span-size * 5.5);
 
     .loader {
-      margin-top: $span-size * 2.7;
-      margin-left: $span-size * 2.7;
-      width: $span-size * 3;
-      height: $span-size * 5;
+      margin-top: var(--loader-span-size, $loader-span-size * 2.7);
+      margin-left: var(--loader-span-size, $loader-span-size * 2.7);
+      width: var(--loader-span-size, $loader-span-size * 3);
+      height: var(--loader-span-size, $loader-span-size * 5);
       transform: translate(-50%, -50%) rotate(45deg) translate3d(0, 0, 0);
       animation: loader 1.2s infinite ease-in-out;
 
       span {
         position: absolute;
         display: block;
-        background-color: $bg-color-spinner;
+        background-color: var(--loader-spinner, $loader-spinner);
         animation: loaderBlock 1.2s infinite ease-in-out both;
 
         &:nth-child(1) {
@@ -96,7 +96,6 @@ $z-index: 1001;
 }
 
 @keyframes view {
-
   0% {
     opacity: 0;
   }
@@ -105,34 +104,32 @@ $z-index: 1001;
     opacity: 0.5;
   }
   100% {
-   opacity: 1;
+    opacity: 1;
   }
 }
 
 @keyframes loader {
-
   0%,
   10%,
   100% {
-    width: $span-size * 2;
-    height: $span-size * 2;
+    width: var(--loader-span-size, $loader-span-size * 2);
+    height: var(--loader-span-size, $loader-span-size * 2);
   }
 
   65% {
-    width: $span-size * 3.75;
-    height: $span-size * 3.75;
+    width: var(--loader-span-size, $loader-span-size * 3.75);
+    height: var(--loader-span-size, $loader-span-size * 3.75);
   }
 }
 
 @keyframes loaderBlock {
-
   0%,
   30% {
     transform: rotate(0);
   }
 
   55% {
-    background-color: $bg-color-spinner;
+    background-color: var(--loader-spinner, $loader-spinner);
   }
 
   100% {
@@ -141,14 +138,13 @@ $z-index: 1001;
 }
 
 @keyframes loaderBlockInverse {
-
   0%,
   20% {
     transform: rotate(0);
   }
 
   55% {
-    background-color: $bg-color-spinner;
+    background-color: var(--loader-spinner, $loader-spinner);
   }
 
   100% {
@@ -157,7 +153,7 @@ $z-index: 1001;
 }
 
 .size {
-  width: $span-size;
-  height: $span-size;
+  width: var(--loader-span-size, $loader-span-size);
+  height: var(--loader-span-size, $loader-span-size);
 }
 </style>
