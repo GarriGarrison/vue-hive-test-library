@@ -62,7 +62,6 @@ const handleInput = (value: currentType) => {
 
 const handleKeydown = (event: KeyboardEvent) => {
   onKeydown(emit, event);
-  console.log('key', event.key);
 
   if (event.key === 'Backspace' ||event.key =='Delete' ) return
 
@@ -95,7 +94,7 @@ const placeholderView = props.type === 'number' ? 'Введите значени
     :type="type"
     :value="modelValue"
     :placeholder="placeholderView"
-    :step="integer ? '1' : step"
+    :step="integer ? 1 : step"
     :min="min"
     :max="max"
     @input="handleInput(($event.target as HTMLInputElement)?.value)"
