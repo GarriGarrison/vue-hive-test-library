@@ -53,8 +53,8 @@ const handleR = () => {
 
         <hive-input v-model="text" />
         <hive-input  v-model="num" type="number" />
-        <hive-input  v-model="num" type="number" step="1" />
-        <hive-input  v-model="num" type="number" integer :min="5" :max="6"/>
+        <hive-input  v-model="num" type="number" :step="1" />
+        <hive-input  v-model="num" type="text" integer :min="5" :max="6"/>
         <hive-input v-model="num" :mask="/^\d+$/" />
       </widget-wrapper>
     </div>
