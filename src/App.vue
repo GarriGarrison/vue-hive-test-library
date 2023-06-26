@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import WidgetWrapper from '@/WidgetWrapper.vue';
-import { HiveButton, HiveLoader, HiveTextarea } from '.';
+import { HiveButton, HiveInput, HiveLoader, HiveTextarea } from '.';
 
 const text = ref('text');
+const num = ref(0);
 
-const handleClick = () => {
+const handleText = () => {
   console.log('click');
   text.value = 'onClick';
+};
+
+const handleNum = () => {
+  console.log('click');
+  num.value = 1000;
 };
 
 const handleR = () => {
@@ -30,13 +36,26 @@ const handleR = () => {
         <hive-button disabled />
         <hive-button />
         <hive-button :style="{ backgroundColor: 'red' }" @click.right.prevent="handleR" />
-        <hive-button title="Classes" :class="'test'" @click="handleClick" />
+        <hive-button title="Classes" :class="'test'" @click="handleText" />
       </widget-wrapper>
 
       <!-- Textarea -->
       <widget-wrapper title="Textarea">
         {{ text }}
         <hive-textarea v-model="text" resize-direction="both" />
+      </widget-wrapper>
+
+      <!-- Input -->
+      <widget-wrapper title="Input">
+        <div>{{ text }}</div>
+        <div>{{ num }}</div>
+        <hive-button title="Classes" :class="'test'" @click="handleNum" />
+
+        <hive-input v-model="text" />
+        <hive-input  v-model="num" type="number" />
+        <hive-input  v-model="num" type="number" step="1" />
+        <hive-input  v-model="num" type="number" integer :min="5" :max="6"/>
+        <hive-input v-model="num" :mask="/^\d+$/" />
       </widget-wrapper>
     </div>
   </div>
