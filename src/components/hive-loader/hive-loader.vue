@@ -41,7 +41,6 @@ $loader-z: 1001;
     margin: auto;
     background-color: var(--loader-window, $loader-window);
     z-index: var(--loader-z, $loader-z);
-    animation: view 1s infinite ease-in-out;
   }
 
   &__wrapper {
@@ -92,6 +91,11 @@ $loader-z: 1001;
         }
       }
     }
+  }
+
+  &__size {
+    width: var(--loader-span-size, $loader-span-size);
+    height: var(--loader-span-size, $loader-span-size);
   }
 }
 
@@ -152,8 +156,8 @@ $loader-z: 1001;
   }
 }
 
-.size {
-  width: var(--loader-span-size, $loader-span-size);
-  height: var(--loader-span-size, $loader-span-size);
-}
+// .size {
+//   width: var(--loader-span-size, $loader-span-size);
+//   height: var(--loader-span-size, $loader-span-size);
+// }
 </style>

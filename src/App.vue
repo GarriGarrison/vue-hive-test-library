@@ -22,7 +22,7 @@ const handleR = () => {
 </script>
 
 <template>
-  <hive-loader />
+  <hive-loader :visible="true" />
 
   <div class="app">
     <div class="wrapper">
