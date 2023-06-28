@@ -33,15 +33,14 @@ export interface Props extends CommonProps {
 const props = withDefaults(defineProps<Props>(), {
   modelValueEventName: 'input',
   type: 'text',
-  placeholder: 'Введите текст...',
   invalid: false,
   integer: false,
   step: 0.01,
 });
 
-type currentType = typeof props.modelValue;
+type Current = typeof props.modelValue;
 
-type Emit = Mount & Unmount & Update<currentType> & Focusin & Focusout & Keydown & Input<currentType>;
+type Emit = Mount & Unmount & Update<Current> & Focusin & Focusout & Keydown & Input<Current>;
 
 const emit = defineEmits<Emit>();
 
@@ -55,7 +54,7 @@ const forceFocus = () => {
   }
 };
 
-const handleInput = (value: currentType) => {
+const handleInput = (value: Current) => {
   emit('update:modelValue', value);
   onInput(emit, value);
 };
@@ -80,9 +79,6 @@ export interface InputExpose {
 }
 
 defineExpose({ input, forceFocus });
-
-/* Changing placeholder depending on props.type */
-const placeholderView = props.type === 'number' ? 'Введите значение...' : props.placeholder;
 </script>
 
 <template>
@@ -93,7 +89,7 @@ const placeholderView = props.type === 'number' ? 'Введите значени
     :style="style"
     :type="type"
     :value="modelValue"
-    :placeholder="placeholderView"
+    :placeholder="placeholder"
     :step="integer ? 1 : step"
     :min="min"
     :max="max"
