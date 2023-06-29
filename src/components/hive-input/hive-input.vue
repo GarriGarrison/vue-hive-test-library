@@ -38,9 +38,9 @@ const props = withDefaults(defineProps<Props>(), {
   step: 0.01,
 });
 
-type Current = typeof props.modelValue;
+type currentType = typeof props.modelValue;
 
-type Emit = Mount & Unmount & Update<Current> & Focusin & Focusout & Keydown & Input<Current>;
+type Emit = Mount & Unmount & Update<currentType> & Focusin & Focusout & Keydown & Input<currentType>;
 
 const emit = defineEmits<Emit>();
 
@@ -54,7 +54,7 @@ const forceFocus = () => {
   }
 };
 
-const handleInput = (value: Current) => {
+const handleInput = (value: currentType) => {
   emit('update:modelValue', value);
   onInput(emit, value);
 };
@@ -62,7 +62,7 @@ const handleInput = (value: Current) => {
 const handleKeydown = (event: KeyboardEvent) => {
   onKeydown(emit, event);
 
-  if (event.key === 'Backspace' ||event.key =='Delete' ) return
+  if (event.key === 'Backspace' || event.key == 'Delete') return;
 
   if (props.mask && !props.mask.test(event.key)) {
     event.preventDefault();
@@ -90,7 +90,7 @@ defineExpose({ input, forceFocus });
     :type="type"
     :value="modelValue"
     :placeholder="placeholder"
-    :step="integer ? 1 : step"
+    :step="integer ? '1' : step"
     :min="min"
     :max="max"
     @input="handleInput(($event.target as HTMLInputElement)?.value)"

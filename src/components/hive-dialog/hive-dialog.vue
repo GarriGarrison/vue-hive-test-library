@@ -1,26 +1,23 @@
 <script lang="ts" setup>
 import { CommonProps } from '@/common/mixin/props';
-import { Update } from '@/common/mixin/emits';
+import { Update, onUpdateModelValue } from '@/common/mixin/emits';
 
-export interface HiveDialogProps extends CommonProps {
+export interface Props extends CommonProps {
   modelValue: boolean;
-  top?: string;
-  left?: string;
   maskBackground?: string;
 }
 
-withDefaults(defineProps<HiveDialogProps>(), {
+withDefaults(defineProps<Props>(), {
   modelValue: false,
-  top: '40%',
-  left: '40%',
   maskBackground: '#262d34ad',
 });
 
-const emit = defineEmits<Update<boolean>>();
+type Emit = Update<boolean>
+
+const emit = defineEmits<Emit>();
 
 const handleHide = () => {
-
-  emit('update:modelValue', false);
+  onUpdateModelValue(emit, false);
 };
 </script>
 
@@ -29,17 +26,15 @@ const handleHide = () => {
     <transition name="backdrop">
       <div v-if="modelValue" class="hive-dialog__fade">
         <div class="hive-dialog__mask" @click="handleHide" :style="{ background: maskBackground }" />
-      </div>
-    </transition>
 
-    <transition name="content">
-      <div v-if="modelValue" ref="content" class="hive-dialog" :style="{ top: top, left: left }">
-        <button class="hive-dialog__btn-close" @click="handleHide">
-          <img class="hive-dialog__btn-close-img" src="./icons/remove.svg" alt="Notification close button" />
-        </button>
-        <slot name="header" />
-        <slot />
-        <slot name="footer" />
+        <div v-if="modelValue" ref="content" class="hive-dialog">
+          <button class="hive-dialog__btn-close" @click="handleHide">
+            <img class="hive-dialog__btn-close-img" src="./icons/remove.svg" alt="Dialog close button" />
+          </button>
+          <slot name="header" />
+          <slot />
+          <slot name="footer" />
+        </div>
       </div>
     </transition>
   </teleport>
@@ -51,14 +46,25 @@ const handleHide = () => {
 $dialog-bg: #ffffff;
 $dialog-trait: lightgrey;
 $dialog-transition: 0.25s linear;
+$dialog-padding-content: 15px;
+$dialog-height-min: 50px;
+$dialog-width-min: 100px;
+
 
 .hive-dialog {
   position: fixed;
-  padding: 15px;
+  padding: $dialog-padding-content;
   background-color: $dialog-bg;
   border-radius: $border-radius;
-  min-width: 100px;
-  min-height: 50px;
+  min-width: $dialog-width-min;
+  min-height: $dialog-height-min;
+  max-width: fit-content;
+  max-height: fit-content;
+  left: calc(-50vw + 50%);
+  right: calc(-50vw + 50%);
+  top: calc(-50vh + 50%);
+  bottom: calc(-50vh + 50%);
+  margin: auto;
 
   &__mask {
     position: fixed;
@@ -66,9 +72,6 @@ $dialog-transition: 0.25s linear;
     left: 0;
     width: 100vw;
     height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
 
   &__btn-close {
@@ -76,7 +79,6 @@ $dialog-transition: 0.25s linear;
     font: inherit;
     color: inherit;
     margin: 0;
-    // padding: 0;
     overflow: visible;
     text-transform: none;
     background-color: transparent;
@@ -115,11 +117,11 @@ $dialog-transition: 0.25s linear;
 .backdrop-leave-active {
   transition: opacity 0.25s ease-in;
 }
-
-.content-enter-active {
+.backdrop-enter-active .hive-dialog {
   animation: modal-door-enter 400ms both cubic-bezier(0.4, 0, 0, 1.5);
+  transition-delay: 0.25s;
 }
-.content-leave-active {
+.backdrop-leave-active .hive-dialog {
   animation: modal-door-leave 400ms both ease-out;
 }
 

@@ -3,7 +3,7 @@ import { StyleValue, ref } from 'vue';
 import { CommonProps } from '@/common/mixin/props';
 import { Update } from '@/common/mixin/emits';
 
-export interface HiveTextariaProps extends CommonProps {
+export interface Props extends CommonProps {
   modelValue: string;
   placeholder?: string;
   rowsCount?: number;
@@ -12,13 +12,15 @@ export interface HiveTextariaProps extends CommonProps {
   style?: StyleValue;
 }
 
-withDefaults(defineProps<HiveTextariaProps>(), {
+withDefaults(defineProps<Props>(), {
   modelValue: '',
   resizable: true,
   resizeDirection: 'both',
 });
 
-const emit = defineEmits<Update<string>>();
+type Emit = Update<string>
+
+const emit = defineEmits<Emit>();
 </script>
 
 <template>
@@ -48,6 +50,8 @@ const emit = defineEmits<Update<string>>();
   transition: color 0.1s ease, border-color 0.1s ease;
   font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
   font-size: 1rem;
+  box-sizing: border-box;
+  max-width: 100%;
 
   &.resizable {
     resize: vertical;

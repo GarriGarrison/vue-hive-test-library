@@ -2,12 +2,12 @@
 import { StyleValue } from 'vue';
 import { CommonProps } from '@/common/mixin/props';
 
-export interface HiveLoaderProps extends CommonProps {
+export interface Props extends CommonProps {
   visible?: boolean;
   style?: StyleValue;
 }
 
-withDefaults(defineProps<HiveLoaderProps>(), {
+withDefaults(defineProps<Props>(), {
   visible: false,
 });
 </script>
@@ -155,9 +155,4 @@ $loader-z: 1001;
     transform: rotate(-90deg);
   }
 }
-
-// .size {
-//   width: var(--loader-span-size, $loader-span-size);
-//   height: var(--loader-span-size, $loader-span-size);
-// }
 </style>
