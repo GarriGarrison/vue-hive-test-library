@@ -61,8 +61,9 @@ useOnMount(emit);
 
 const menuRef = ref(null);
 
-const { currentValue, activeValue, currentOption, currentOptions, filteredOptions, searchQuery } =
-  useList(props as ListConfig);
+const { currentValue, activeValue, currentOption, currentOptions, filteredOptions, searchQuery } = useList(
+  props as ListConfig,
+);
 
 const {
   isExpanded,
@@ -147,8 +148,14 @@ defineExpose({ searchRef, forceFocus });
 </script>
 
 <template>
-  <div class="hive-drop-down" :class="{ 'active visible': isExpanded }" @focusin="expand()" @focusout="collapse()">
-    <i class="hive-drop-down__icon" :class="{expand: isExpanded }" @mousedown="toggle" />
+  <div
+    class="hive-drop-down"
+    :class="{ 'active visible': isExpanded }"
+    :style="style"
+    @focusin="expand()"
+    @focusout="collapse()"
+  >
+    <i class="hive-drop-down__icon" :class="{ expand: isExpanded }" @mousedown="toggle" />
     <hive-input
       v-model="searchQuery"
       ref="searchRef"
@@ -165,7 +172,7 @@ defineExpose({ searchRef, forceFocus });
       @keydown.esc="collapse"
       @input="onInput(emit, $event as string)"
     />
-    <div class="hive-drop-down__text" :class="{ filtered: searchQuery.length > 0 }">
+    <div class="hive-drop-down__text" :class="{ filtered: searchQuery.length > 0, expand: isExpanded }">
       <div v-if="imgsArray" class="hive-drop-down__text-img">
         <!-- TODO -->
         <!-- <img :src="imgsArray[currentOption?.title]" alt="" /> -->
@@ -180,7 +187,7 @@ defineExpose({ searchRef, forceFocus });
     <div
       ref="menuRef"
       class="hive-drop-down__menu"
-      :class="{ visible: isExpanded, hidden: isExpanded }"
+      :class="{ visible: isExpanded }"
       :style="{
         height: menuHeight,
       }"
@@ -188,7 +195,7 @@ defineExpose({ searchRef, forceFocus });
       <hive-observable
         v-for="option in filteredOptions"
         :key="option.key"
-        :root="(menuRef as unknown as Record<string, any>)"
+        :root="menuRef as unknown as Record<string, any>"
         :threshold="0.2"
         @appear="onAppear(option)"
         @disappear="onDisappear(option)"
@@ -231,6 +238,7 @@ $drop-down-selected_color: rgba(0, 0, 0, 0.95);
 $drop-down-border-top: #fafafa;
 $drop-down-box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
 $drop-down-border-color-hover: rgba(34, 36, 38, 0.35);
+$drop-down-padding: 0.5rem 0;
 
 .hive-drop-down {
   position: relative;
@@ -246,22 +254,25 @@ $drop-down-border-color-hover: rgba(34, 36, 38, 0.35);
   color: var(--text, $text);
   box-shadow: none;
   border: 1px solid var(--border, $border);
-  padding: $p-input;
+  padding: $drop-down-padding;
   border-radius: var(--border-radius, $border-radius);
-  transition: box-shadow 0.1s ease, width 0.1s ease;
+  transition:
+    box-shadow 0.1s ease,
+    width 0.1s ease;
 
   &__search {
     position: absolute;
     top: 0;
+    left: 0;
     z-index: $drop-down-z_search;
     background: none transparent;
     border: none;
     box-shadow: none;
     width: 100%;
-    height: 100%;
+    height: 2rem;
     outline: none;
     line-height: 2rem;
-    padding: $p-input;
+    padding: 1rem;
     cursor: default;
     font: inherit;
 
@@ -277,11 +288,21 @@ $drop-down-border-color-hover: rgba(34, 36, 38, 0.35);
     z-index: auto;
     display: inline-block;
     transition: none;
+    padding-left: 1rem;
 
     &-img {
       display: flex;
       align-items: center;
       gap: 5px;
+    }
+
+    &.expand {
+      opacity: 0.7;
+    }
+
+    &.filtered {
+      color: transparent;
+      opacity: 0.1;
     }
   }
 
@@ -293,7 +314,7 @@ $drop-down-border-color-hover: rgba(34, 36, 38, 0.35);
     right: 1rem;
     opacity: 0.7;
     background: none;
-    
+
     &:before {
       content: '▼';
     }
@@ -304,17 +325,15 @@ $drop-down-border-color-hover: rgba(34, 36, 38, 0.35);
       }
     }
   }
-  
+
   &__menu {
     cursor: auto;
-    position: absolute;
     left: 0;
     z-index: $drop-down-z_menu;
     display: none;
     outline: none;
-    top: 95%;
     margin: 0;
-    padding: 0 0;
+    padding: 0;
     background-color: var(--bg-input, $bg-input);
     text-shadow: none;
     text-align: left;
@@ -323,13 +342,8 @@ $drop-down-border-color-hover: rgba(34, 36, 38, 0.35);
     overflow-x: hidden;
     overflow-y: auto;
     backface-visibility: hidden;
+    border: none;
     border-top-width: 0 !important;
-    width: auto;
-    outline: none;
-    margin: 0 -1px;
-    min-width: 100%;
-    width: 100%;
-    transition: opacity 0.1s ease;
     max-height: $drop-down-max-height;
 
     &:after {
@@ -358,39 +372,15 @@ $drop-down-border-color-hover: rgba(34, 36, 38, 0.35);
     box-shadow: none;
   }
 
-  &:focus {
-    border-color: $border-focus;
-    box-shadow: none;
-
-    .menu {
-      border-color: $border-focus;
-      box-shadow: $drop-down-box-shadow;
-    }
-  }
-
   &.active {
     z-index: $drop-down-z-active;
-    border-color: $border-focus;
+    border-color: var(--border, $border-focus);
     box-shadow: $drop-down-box-shadow;
 
-    .text {
-      color: $text;
-
-      &.filtered {
-        color: transparent;
-      }
-    }
-
-    .menu {
-      border-color: $border-focus;
-      box-shadow: $drop-down-box-shadow;
+    .visible {
+      display: block;
+      padding-top: 1rem;
     }
   }
-}
-
-.active .visible {
-  display: block;
-  border: 1px solid $border-focus;
-  padding-top: 1rem;
 }
 </style>
