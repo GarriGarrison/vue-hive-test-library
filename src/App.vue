@@ -1,9 +1,9 @@
-<script setup lang="ts">
+<script lang="ts"  setup>
 import { ref } from 'vue';
 import WidgetWrapper from '@/WidgetWrapper.vue';
 import { HiveButton, HiveDialog, HiveLoader, HiveTextarea } from '.';
-// import HiveDropDown from './components/hive-drop-down/hive-drop-down.vue';
 import hiveInput from './components/hive-input/hive-input.vue';
+import HiveDropDown from './components/hive-drop-down/hive-drop-down.vue';
 
 const text = ref('text');
 const num = ref(0);
@@ -128,6 +128,8 @@ const optionsObject = [
           <hive-button />
           Hello
 
+           <hive-drop-down :options="optionsObject" />
+
           <template #footer>
             <hive-button title="close" />
           </template>
@@ -136,8 +138,9 @@ const optionsObject = [
 
       <!-- DropDown -->
       <widget-wrapper title="DropDown">
-        <!-- <hive-input v-model="input" /> -->
-        <hive-drop-down :options="optionsObject" key-field="key" value-field="value" title-field="title" />
+        <hive-drop-down :options="optionsObject" />
+        <hive-drop-down :options="optionsObject" value-field="value" title-field="title" />
+        <hive-drop-down :options="options" />
       </widget-wrapper>
     </div>
   </div>
