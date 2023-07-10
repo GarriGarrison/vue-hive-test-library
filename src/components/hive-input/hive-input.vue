@@ -78,7 +78,7 @@ export interface InputExpose {
   forceFocus: () => void;
 }
 
-defineExpose({ inputRef, forceFocus });
+defineExpose({ input: inputRef, forceFocus });
 </script>
 
 <template>
@@ -112,9 +112,7 @@ defineExpose({ inputRef, forceFocus });
   background-color: var(--bg-input, $bg-input);
   color: var(--text, $text);
   resize: none;
-  transition:
-    color 0.1s ease,
-    border-color 0.1s ease;
+  transition: color 0.1s ease, border-color 0.1s ease;
   font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
   font-size: 1rem;
   box-sizing: border-box;
