@@ -8,7 +8,7 @@ import HiveDropDown from './components/hive-drop-down/hive-drop-down.vue';
 const text = ref('text');
 const num = ref(0);
 const isOpenModal = ref(false);
-const dd = ref('dd');
+const dropdown = ref('dd');
 
 const handleText = () => {
   console.log('click');
@@ -99,7 +99,7 @@ const optionsObject = [
       <!-- Textarea -->
       <widget-wrapper title="Textarea">
         {{ text }}
-        <hive-textarea v-model="text" resize-direction="both" :style="{width: '300px'}" />
+        <hive-textarea v-model="text" resize-direction="both" :style="{ width: '300px' }" />
       </widget-wrapper>
 
       <!-- Input -->
@@ -130,7 +130,7 @@ const optionsObject = [
           <hive-button />
           Hello
 
-          <hive-drop-down :options="optionsObject" />
+          <hive-drop-down v-model="dropdown" :options="optionsObject" />
 
           <template #footer>
             <hive-button title="close" />
@@ -140,10 +140,10 @@ const optionsObject = [
 
       <!-- DropDown -->
       <widget-wrapper title="DropDown">
-        {{ dd }}
-        <hive-drop-down :options="optionsObject" :style="{width: '300px'}" />
-        <!-- <hive-drop-down :options="optionsObject" value-field="value" title-field="title" /> -->
-        <!-- <hive-drop-down :options="options" v-model="dd" /> -->
+        {{ dropdown }}
+        <hive-drop-down v-model="dropdown" :options="optionsObject" :style="{ width: '300px' }" />
+        <hive-drop-down v-model="dropdown" :options="optionsObject" value-field="value" title-field="title" />
+        <hive-drop-down v-model="dropdown" :options="options" />
       </widget-wrapper>
     </div>
   </div>

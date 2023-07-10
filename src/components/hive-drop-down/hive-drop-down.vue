@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import HiveInput from '@/components/hive-input/hive-input.vue';
 import HiveObservable from '@/components/hive-observable/hive-observable.vue';
 import { CommonProps } from '@/common/mixin/props';
@@ -18,6 +18,7 @@ import {
   onFocusin,
   onKeydown,
   onSearch,
+  onUpdateModelValue,
 } from '@/common/mixin/emits';
 import { useExpandListMethods } from '@/common/hooks/use-expand-list-methods';
 import { useList, ListConfig } from './hooks/use-list';
@@ -26,7 +27,7 @@ import { Options } from '@/common/types/option';
 
 interface Props extends CommonProps {
   options: Options;
-  modelValue?: string;
+  modelValue: string;
   modelValueEventName?: string;
   disabled?: boolean;
   nullTitle?: string;
@@ -90,6 +91,22 @@ const { updateCurrentValue } = useListMethods({
   collapse,
 });
 
+onMounted(() => {
+  onUpdateModelValue(emit, currentValue.value as string);
+});
+
+watch(currentValue, () => {
+  onUpdateModelValue(emit, currentValue.value as string);
+});
+
+watch(
+  () => props.modelValue,
+  () => {
+    console.log(props.modelValue);
+    updateCurrentValue(props.modelValue);
+  },
+);
+
 watch(
   () => props.options as Options,
   (newValue) => {
@@ -148,13 +165,7 @@ defineExpose({ searchRef, forceFocus });
 </script>
 
 <template>
-  <div
-    class="hive-drop-down"
-    :class="{ 'active visible': isExpanded }"
-    :style="style"
-    @focusin="expand()"
-    @focusout="collapse()"
-  >
+  <div class="hive-drop-down" :class="{ 'active visible': isExpanded }" @focusin="expand()" @focusout="collapse()">
     <i class="hive-drop-down__icon" :class="{ expand: isExpanded }" @mousedown="toggle" />
     <hive-input
       v-model="searchQuery"
@@ -172,7 +183,7 @@ defineExpose({ searchRef, forceFocus });
       @keydown.esc="collapse"
       @input="onInput(emit, $event as string)"
     />
-    <div class="hive-drop-down__text" :class="{ filtered: searchQuery.length > 0, expand: isExpanded }">
+    <div class="hive-drop-down__text" :class="{ filtered: searchQuery.length > 0 }">
       <div v-if="imgsArray" class="hive-drop-down__text-img">
         <!-- TODO -->
         <!-- <img :src="imgsArray[currentOption?.title]" alt="" /> -->
@@ -328,7 +339,7 @@ $drop-down-padding: 0.5rem 0;
 
   &__menu {
     cursor: auto;
-    left: 0;
+    // left: 0;
     z-index: $drop-down-z_menu;
     display: none;
     outline: none;

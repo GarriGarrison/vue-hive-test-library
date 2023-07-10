@@ -13,13 +13,12 @@ export type ListMethodsExport = {
 };
 
 export const useListMethods = ({
-  activeValue,
   currentValue,
   filteredOptions,
   collapse,
 }: ListMethodsConfig): ListMethodsExport => {
   const updateCurrentValue = (value: Value) => {
-    if (!filteredOptions.value[String(activeValue.value)]) {
+    if (!filteredOptions.value[String(value)]) {
       collapse();
       return;
     }
