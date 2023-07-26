@@ -27,7 +27,7 @@ import { Options } from '@/common/types/option';
 
 interface Props extends CommonProps {
   options: Options;
-  modelValue: string;
+  modelValue: string | number;
   modelValueEventName?: string;
   disabled?: boolean;
   nullTitle?: string;
@@ -227,14 +227,13 @@ defineExpose({ searchRef, forceFocus });
 <style lang="scss" scoped>
 @import '@/assets/variables.scss';
 
-$drop-down-z_search: 2;
 $drop-down-z_menu: 11;
 $drop-down-border: 1px solid var(--border, $border);
 $drop-down-selected_background: rgba(0, 0, 0, 0.03);
 $drop-down-selected_color: rgba(0, 0, 0, 0.95);
 $drop-down-border-top: #fafafa;
 $drop-down-box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
-$drop-down-padding: 0.8em 1em 0.8em 1em;
+$drop-down-padding: 0.5em 1em 0.5em 1em;
 
 .hive-drop-down {
   position: relative;
@@ -252,7 +251,6 @@ $drop-down-padding: 0.8em 1em 0.8em 1em;
   border: $drop-down-border;
   border-radius: var(--border-radius, $border-radius);
   padding: $drop-down-padding;
-  width: 100%;
   display: flex;
   align-items: center;
   justify-content: right;
@@ -272,9 +270,8 @@ $drop-down-padding: 0.8em 1em 0.8em 1em;
     position: absolute;
     left: 1px;
     top: 0;
-    z-index: $drop-down-z_search;
     height: 100%;
-    width: 100%;
+    width: calc(100% - 1.2em);
     line-height: 1.2rem;
     padding: $drop-down-padding;
     cursor: default !important;
@@ -286,6 +283,7 @@ $drop-down-padding: 0.8em 1em 0.8em 1em;
 
     &::placeholder {
       opacity: 1;
+      color: $text;
     }
 
     &:focus {
