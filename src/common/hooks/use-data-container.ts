@@ -56,6 +56,7 @@ export const useDataContainer = <T>({
 
   return computed<DataContainer<T>>((): DataContainer<T> => {
     const result: DataContainer<T> = {};
+    const resultM: Record<string, string> = new Map<string, string>();
 
     let prev: DataContainerNode<T> | null = null;
 
@@ -76,10 +77,21 @@ export const useDataContainer = <T>({
           prev.next = current as DataContainerNode<T>;
         }
 
+        // console.log('key', dataKey);
+        // console.log('val', current);
+        
+        
+
         result[dataKey] = current as DataContainerNode<T>;
+        resultM.set(dataKey, current);
         prev = current as DataContainerNode<T>;
       }
     }
+
+    // console.log('result', result);
+    // console.log('resultM', resultM);
+    
+    
 
     return result;
   });

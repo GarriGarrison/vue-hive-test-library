@@ -4,6 +4,7 @@ import WidgetWrapper from '@/WidgetWrapper.vue';
 import { HiveButton, HiveDialog, HiveLoader, HiveTextarea } from '.';
 import HiveInput from './components/hive-input/hive-input.vue';
 import HiveDropDown from './components/hive-drop-down/hive-drop-down.vue';
+import HiveDD from './components/hive-dd/hive-dd.vue';
 
 const text = ref('text');
 const num = ref(0);
@@ -34,7 +35,7 @@ const optionsObjectSort = [
     // key: 'key1',
     // title: 'title3',
     // value: 'value3',
-    value: '2023',
+    value: 2023,
     title: '2023',
     // key: '0',
   },
@@ -42,7 +43,7 @@ const optionsObjectSort = [
     // key: 'key2',
     // title: 'title2',
     // value: 'value2',
-    value: '2022',
+    value: 2022,
     title: '2022',
     // key: '1',
   },
@@ -50,7 +51,7 @@ const optionsObjectSort = [
     // key: 'key3',
     // title: 'title1',
     // value: 'value1',
-    value: '2024',
+    value: 2024,
     title: '2024',
     // key: '2',
   },
@@ -178,6 +179,7 @@ const optionsObject = [
         {{ dd3 }}
         <!-- <hive-drop-down v-model="dropdown" :options="optionsObject" :style="{ width: '300px' }" /> -->
         <hive-drop-down v-model="dd3" :options="optionsObjectSort" value-field="value" title-field="title" />
+         <hive-d-d v-model="dd3" :options="optionsObjectSort" title="hello" />
         <!-- <hive-drop-down v-model="dropdown" :options="options" /> -->
 
         <!-- <select>
