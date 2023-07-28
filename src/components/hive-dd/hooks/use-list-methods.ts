@@ -1,57 +1,43 @@
-// import { FilteredOptions } from '@/common/types/option';
-// import { ActiveValue, CurrentValue, Value } from '@/common/types/value';
-
-import { Ref, computed, ref } from 'vue';
+import { Ref, computed, ref, watch } from 'vue';
 import { InputExpose } from '@/components/hive-input/hive-input.vue';
+import { Value, Option } from '@/common/types/select';
 
-// export type ListMethodsConfig = {
-//   activeValue: ActiveValue;
-//   currentValue: CurrentValue;
-//   filteredOptions: FilteredOptions;
-//   collapse: () => void;
-// };
-
-// export type ListMethodsExport = {
-//   updateCurrentValue: (value: Value) => void;
-// };
-
-// export const useListMethods = ({ currentValue, filteredOptions, collapse }: ListMethodsConfig): ListMethodsExport => {
-//   const updateCurrentValue = (value: Value) => {
-//     if (!filteredOptions.value[String(value)]) {
-//       collapse();
-//       return;
-//     }
-
-//     if (currentValue.value !== value) {
-//       currentValue.value = value;
-//     }
-
-//     collapse();
-//   };
-
-//   return {
-//     updateCurrentValue,
-//   };
-// };
-
-export type Value = string | number | null;
-export type Option = {
-  title: string;
-  value: Value;
+export type ListMethodsConfig = {
+  options: Option[];
+  modelValue: Value;
+  withNull: boolean;
+  nullTitle: string;
+  fieldTitle: string;
+  fieldValue: string;
 };
 
-export const useListMethods = (options: Option[], modelValue: Value) => {
+export const useListMethods = ({ options, modelValue, withNull, nullTitle, fieldTitle, fieldValue }: ListMethodsConfig) => {
   const isExpanded = ref(false);
   const activeValue: Ref<Value | undefined> = ref();
   const currentValue: Ref<Value | undefined> = ref();
-  const current: Ref<Option> = ref(options[0]);
+  const current: Ref<Option | undefined> = ref();
   const searchQuery = ref('');
   const searchRef: Ref<InputExpose | null> = ref(null);
   const searchInput = computed(() => searchRef.value?.input);
+  const currentOptions = ref(new Map());
   const filteredOptions = ref(new Map());
+  const nullOption = ref({
+    [fieldTitle]: nullTitle,
+    [fieldValue]: null,
+  });
+
+  if (withNull) {
+    filteredOptions.value.set('null', nullOption.value);
+    currentOptions.value.set('null', nullOption.value);    
+  }
 
   for (const option of options) {
-    filteredOptions.value.set(option.value, option)
+    filteredOptions.value.set(option[fieldValue], option)
+    currentOptions.value.set(option[fieldValue], option)
+  }
+
+  if (withNull) {
+    current.value = nullOption.value;
   }
 
   if (modelValue) {
@@ -64,7 +50,12 @@ export const useListMethods = (options: Option[], modelValue: Value) => {
   };
     
 
-  const updateCurrentValue = (value: Value) => {
+  const updateCurrentValue = (value: Value | undefined) => {
+    if (!value) {
+      collapse();
+      return;
+    }
+
     currentValue.value = value;
     current.value = filteredOptions.value.get(value);
     collapse();
@@ -90,6 +81,20 @@ export const useListMethods = (options: Option[], modelValue: Value) => {
     }
   };
 
+  watch(searchQuery, () => {
+    if (searchQuery.value) {
+      filteredOptions.value.clear();
+
+      for (const item of currentOptions.value) {
+        if (item[1][fieldTitle].indexOf(searchQuery.value) !== -1) {
+          filteredOptions.value.set(item[1][fieldValue], item[1]);
+        }
+      }   
+    } else {
+      filteredOptions.value = new Map(JSON.parse(JSON.stringify([...currentOptions.value])))
+    }
+  })
+
   return {
     isExpanded,
     activeValue,
@@ -102,6 +107,9 @@ export const useListMethods = (options: Option[], modelValue: Value) => {
     searchInput,
     expand,
     collapse,
-    toggle
+    toggle,
+    filteredOptions,
+    setPrevActiveValue,
+  setNextActiveValue,
   }
 };

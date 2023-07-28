@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref, watch } from 'vue';
 import HiveInput from '@/components/hive-input/hive-input.vue';
-// import { Value } from '@/common/types/value';
 import {
   Focusout,
   Keydown,
@@ -18,55 +16,45 @@ import {
   Search,
 } from '@/common/mixin/emits';
 import { useOnMount } from '@/common/hooks/use-mount';
-import { Value, Option, useListMethods } from './hooks/use-list-methods';
-
-// export default {
-//   name: 'dropdown',
-//   props: ['title', 'items'],
-//   data () {
-//     return {
-//       isOpen: false
-//     }
-//   }
-// }
-
-// type Value = string | number | null;
-
-// type Opt = {
-//   title: string;
-//   value: Value;
-// };
+import { ListMethodsConfig, useListMethods } from './hooks/use-list-methods';
+import { Value, Option } from '@/common/types/select';
 
 interface Props {
   options: Option[];
   modelValue: Value;
-  title: string;
+  modelValueEventName?: string;
+  disabled?: boolean;
+  withNull?: boolean;
+  nullTitle?: string;
+  titleField?: string;
+  valueField?: string;
+  mask?: RegExp;
   menuHeight?: string;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  options: () => [],
+  modelValueEventName: 'input',
+  disabled: false,
+  nullTitle: 'Не выбрано',
+  titleField: 'title',
+  valueField: 'value',
+});
 
-// type Emit = Mount & Unmount & Update<currentType> & Focusin & Focusout & Keydown & Input<currentType>;
 type Emit = Mount & Unmount & Update<Value> & Focusin & Focusout & Keydown & Input<string> & Search<string>;
 
 const emit = defineEmits<Emit>();
 
 useOnMount(emit);
 
-// const isOpen = ref(false);
-// const isExpanded = ref(false);
-// const searchQuery = ref('');
-
-// const activeValue = ref(props.modelValue);
-// const updateActiveValue = (value: Value) => {
-//   activeValue.value = value;
-// };
-
-// const currentValue = ref(props.modelValue);
-// const updateCurrentValue = (value: Value) => {
-//   currentValue.value = value;
-//   isExpanded.value = false;
-// };
+const configOptions: ListMethodsConfig = {
+  options: props.options,
+  modelValue: props.modelValue,
+  withNull: props.withNull,
+  nullTitle: props.nullTitle,
+  fieldTitle: props.titleField,
+  fieldValue: props.valueField,
+};
 
 const {
   isExpanded,
@@ -78,67 +66,56 @@ const {
   searchRef,
   expand,
   collapse,
-  toggle
-} = useListMethods(props.options, props.modelValue);
-
-// watch(
-//   () => props.modelValue,
-//   () => {
-//     updateCurrentValue(props.modelValue);
-//   },
-// );
-
-// onMounted(() => {
-//   updateCurrentValue(props.modelValue);
-// })
+  toggle,
+  filteredOptions,
+  setPrevActiveValue,
+  setNextActiveValue,
+} = useListMethods(configOptions);
 </script>
 
 <template>
-  <!-- <div class="menu-item"> -->
-  <div class="hive-drop-down">
-    <!-- <a href="#">
-      {{ title }}
-    </a>
-    <svg viewBox="0 0 1030 638" width="10">
-      <path
-        d="M1017 68L541 626q-11 12-26 12t-26-12L13 68Q-3 49 6 24.5T39 0h952q24 0 33 24.5t-7 43.5z"
-        fill="#FFF"
-      ></path>
-    </svg> -->
-    <hive-input
-      v-model="searchQuery"
-      ref="searchRef"
-      :placeholder="current.title"
-      class="hive-drop-down__search"
-      @focusin="expand"
-      @focusout="collapse"
-    />
-    <i class="hive-drop-down__icon" :class="{ expand: isExpanded }" @mousedown="toggle" />
-    <transition name="fade" appear>
-      <!-- <div class="sub-menu" v-if="!isExpanded"> -->
-      <div
-        v-if="isExpanded"
-        class="hive-drop-down__menu"
-        :style="{
-          height: menuHeight,
-        }"
-      >
-        <!-- <div v-for="(item, i) in options" :key="i" class="menu-item"> -->
+  <div class="wrap">
+    <div class="hive-drop-down">
+      <hive-input
+        v-model="searchQuery"
+        ref="searchRef"
+        :disabled="disabled"
+        :placeholder="(current![titleField] as string)"
+        class="hive-drop-down__search"
+        @focusin="expand(), onFocusin(emit)"
+        @focusout="collapse(), onFocusout(emit)"
+        @keydown="onKeydown(emit, $event)"
+        @keydown.enter="updateCurrentValue(activeValue)"
+        @keydown.esc="collapse"
+        @keydown.up.prevent="setPrevActiveValue"
+        @keydown.down.prevent="setNextActiveValue"
+        @input="onInput(emit, $event as string)"
+      />
+      <i class="hive-drop-down__icon" :class="{ expand: isExpanded }" @mousedown="toggle" />
+      <transition name="fade" appear>
         <div
-          v-for="(item, i) in options"
-          :key="i"
-          class="hive-drop-down__menu-item"
-          :class="{
-            selected: item.value === activeValue,
+          v-if="isExpanded"
+          class="hive-drop-down__menu"
+          :style="{
+            height: menuHeight,
           }"
-          @click="updateCurrentValue(item.value), onUpdateModelValue<Value>(emit, item.value)"
-          @mouseover="updateActiveValue(item.value)"
-          @mousedown.prevent
         >
-          {{ item.value }}
+          <div
+            v-for="(item, i) in filteredOptions"
+            :key="i"
+            class="hive-drop-down__menu-item"
+            :class="{
+              selected: item[1][valueField] === activeValue,
+            }"
+            @click="updateCurrentValue(item[1][valueField]), onUpdateModelValue<Value>(emit, item[1][valueField])"
+            @mouseover="updateActiveValue(item[1][valueField])"
+            @mousedown.prevent
+          >
+            {{ item[1][titleField] }}
+          </div>
         </div>
-      </div>
-    </transition>
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -152,32 +129,41 @@ $drop-down-selected_color: rgba(0, 0, 0, 0.95);
 $drop-down-border-top: #fafafa;
 $drop-down-box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
 $drop-down-padding: 0.5em 1em 0.5em 1em;
-.hive-drop-down {
+
+.wrap {
   position: relative;
+  height: 2.2rem;
+  width: 100%;
+  background-color: aquamarine;
   cursor: pointer;
-  // word-wrap: break-word;
-  // line-height: 1.2rem;
-  // white-space: normal;
+}
+.hive-drop-down {
+  position: absolute;
+  left: 0;
+  top: 0%;
+  width: 100%;
+  cursor: pointer;
   text-align: left;
+  text-shadow: none;
   outline: 0;
-  // background-color: none;
   display: inline-block;
   color: var(--text, $text);
-  // -webkit-box-shadow: none;
-  // box-shadow: none;
   border: $drop-down-border;
   border-radius: var(--border-radius, $border-radius);
-  // padding: $drop-down-padding;
-  // display: flex;
-  // align-items: center;
-  // justify-content: right;
-  // -webkit-transition: width 0.1s ease, -webkit-box-shadow 0.1s ease;
-  // transition: box-shadow 0.1s ease, width 0.1s ease;
+  transition: opacity 0.1s ease;
+  background-color: var(--bg-input, $bg-input);
+  z-index: $drop-down-z_menu;
+  will-change: transform, opacity;
+  animation-iteration-count: 1;
+  animation-duration: 300ms;
+  animation-timing-function: ease;
+  animation-fill-mode: both;
 
   &__search {
     border: none;
     padding: $drop-down-padding;
     width: calc(100% - 2rem);
+    cursor: default;
 
     &::placeholder {
       opacity: 1;
@@ -212,15 +198,6 @@ $drop-down-padding: 0.5em 1em 0.5em 1em;
   }
 
   &__menu {
-    // position: absolute;
-    // background-color: #222;
-    // top: 100%; //calc(100% + 18px);
-    // left: 0%;
-    // transform: translateX(-50%);
-    // width: max-content;
-    // border-radius: 0px 0px 16px 16px;
-    // padding: $drop-down-padding;
-
     &-item {
       border-top: 1px solid $drop-down-border-top;
       padding: $p-input !important;
@@ -235,11 +212,6 @@ $drop-down-padding: 0.5em 1em 0.5em 1em;
   }
 }
 
-// .menu-item svg {
-//   width: 10px;
-//   margin-left: 10px;
-// }
-
 .menu-item .sub-menu {
   position: absolute;
   background-color: #222;
@@ -249,14 +221,4 @@ $drop-down-padding: 0.5em 1em 0.5em 1em;
   width: max-content;
   border-radius: 0px 0px 16px 16px;
 }
-
-// .fade-enter-active,
-// .fade-leave-active {
-//   transition: all 0.5s ease-out;
-// }
-
-// .fade-enter,
-// .fade-leave-to {
-//   opacity: 0;
-// }
 </style>
