@@ -1,6 +1,9 @@
+import { ComputedRef } from 'vue';
+
 export type Value = string | number | null;
+
 export type Option = {
-  // title: string;
-  // value: Value;
   [key: string]: Value
 };
+
+export type OptionsRef = ComputedRef<Option[] | undefined>

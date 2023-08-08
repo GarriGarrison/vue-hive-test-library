@@ -1,16 +1,17 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import WidgetWrapper from '@/WidgetWrapper.vue';
 import { HiveButton, HiveDialog, HiveLoader, HiveTextarea } from '.';
 import HiveInput from './components/hive-input/hive-input.vue';
 import HiveDropDown from './components/hive-drop-down/hive-drop-down.vue';
-import HiveDD from './components/hive-dd/hive-dd.vue';
+import { Option } from './common/types/select';
+import { useYearStore } from './stores/years';
 
 const text = ref('text');
 const num = ref(0);
 const isOpenModal = ref(false);
 const dropdown = ref('dd');
-const dd3 = ref(null);
+const dd3 = ref(2023);
 
 const handleText = () => {
   console.log('click');
@@ -30,7 +31,10 @@ const input = ref('');
 
 const options = [5, 2, 1, 4, 3, 6];
 
-const optionsObjectSort = [
+let optionsTest: Option[] | undefined;
+
+setTimeout(() => {
+  optionsTest = [
   {
     // key: 'key1',
     // title: 'title3',
@@ -55,7 +59,36 @@ const optionsObjectSort = [
     titl: 't2024',
     // key: '2',
   },
-];
+]
+})
+
+const optionsObjectSort = //computed(() => optionsTest);
+[
+  {
+    // key: 'key1',
+    // title: 'title3',
+    // value: 'value3',
+    valu: '2023',
+    titl: 't2023',
+    // key: '0',
+  },
+  {
+    // key: 'key2',
+    // title: 'title2',
+    // value: 'value2',
+    valu: '2022',
+    titl: 't2022',
+    // key: '1',
+  },
+  {
+    // key: 'key3',
+    // title: 'title1',
+    // value: 'value1',
+    valu: '2024',
+    titl: 't2024',
+    // key: '2',
+  },
+]
 
 const optionsObject = [
   {
@@ -104,6 +137,13 @@ const optionsObject = [
     value: 'value9',
   },
 ];
+
+const yearStore = useYearStore();
+const yearList = computed(() => yearStore.years);
+
+onMounted(() => {
+  yearStore.getYears();
+})
 </script>
 
 <template>
@@ -129,7 +169,7 @@ const optionsObject = [
       <!-- Textarea -->
       <widget-wrapper title="Textarea">
         {{ text }}
-        <hive-textarea v-model="text" resize-direction="both" :style="{ width: '300px' }" />
+        <hive-textarea v-model="text" resize-direction="both" :style="{ width: '300px' }"  disabled />
       </widget-wrapper>
 
       <!-- Input -->
@@ -138,7 +178,7 @@ const optionsObject = [
         <div>{{ num }}</div>
         <hive-button title="Classes" :class="'test'" @click="handleNum" />
 
-        <hive-input v-model="text" />
+        <hive-input v-model="text" disabled />
         <hive-input v-model="num" type="number" />
         <hive-input v-model="num" type="number" :step="1" />
         <hive-input v-model="num" type="text" integer :min="5" :max="6" />
@@ -162,7 +202,7 @@ const optionsObject = [
             <hive-input v-model="text" />
             <hive-textarea v-model="text" resize-direction="both" :style="{ width: '300px' }" />
             <!-- <hive-drop-down v-model="dropdown" :options="optionsObject" :style="{ width: '300px' }" /> -->
-            <hive-drop-down v-model="dropdown" :options="optionsObject" :style="{ width: '300px' }" menu-width="0px" />
+            <!-- <hive-drop-down v-model="dropdown" :options="optionsObject" :style="{ width: '300px' }" menu-width="0px" /> -->
             <hive-button />
           </div>
 
@@ -179,15 +219,9 @@ const optionsObject = [
         {{ dd3 }}
         <!-- <hive-drop-down v-model="dropdown" :options="optionsObject" :style="{ width: '300px' }" /> -->
         <!-- <hive-drop-down v-model="dd3" :options="optionsObjectSort" value-field="value" title-field="title" /> -->
-        <hive-d-d v-model="dd3" :options="optionsObjectSort" title-field="titl" value-field="valu" with-null/>
-        <hive-drop-down v-model="dropdown" :options="options" />
-
-        <!-- <select>
-          <input>
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-        </select> -->
+        <!-- <hive-drop-down v-model="dd3" :options="optionsObjectSort" title-field="titl" value-field="valu" with-null/> -->
+        <hive-drop-down v-model="dd3" :options="yearList" title-field="title" value-field="value" with-null disabled />
+        <!-- <hive-drop-down v-model="dropdown" :options="options" /> -->
       </widget-wrapper>
     </div>
   </div>
