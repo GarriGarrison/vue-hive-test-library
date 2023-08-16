@@ -11,20 +11,20 @@ import {
   Mount,
   Unmount,
   Update,
-  Input,
-  onInput,
   onUpdateModelValue,
   Search,
+  onSearch,
 } from '@/common/mixin/emits';
 import { useOnMount } from '@/common/hooks/use-mount';
 import { useListMethods } from './hooks/use-list-methods';
-import { Value, Option,  } from '@/common/types/select';
+import { Options, Value  } from '@/common/types/select';
 
 interface Props {
-  options: Option[] | undefined;
+  options: Options | undefined;
   modelValue: Value;
   modelValueEventName?: string;
   disabled?: boolean;
+  withUndefined?: boolean; 
   withNull?: boolean;
   nullTitle?: string;
   titleField?: string;
@@ -34,23 +34,22 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  options: () => [],
-  modelValueEventName: 'input',
+  modelValueEventName: 'onAfterChange',
   disabled: false,
   nullTitle: 'Не выбрано',
   titleField: 'title',
   valueField: 'value',
+  menuHeight: '5rem'
 });
 
-type Emit = Mount & Unmount & Update<Value> & Focusin & Focusout & Keydown & Input<string> & Search<string>;
-
+type Emit = Mount & Unmount & Update<Value> & Focusin & Focusout & Keydown & Search<string>;
 const emit = defineEmits<Emit>();
-
 useOnMount(emit);
 
 const configOptions = reactive({
   options: props.options,
   modelValue: props.modelValue,
+  withUndefined: props.withUndefined,
   withNull: props.withNull,
   nullTitle: props.nullTitle,
   fieldTitle: props.titleField,
@@ -92,8 +91,9 @@ watch(
         v-model="searchQuery"
         ref="searchRef"
         :disabled="disabled"
-        :placeholder="(current ? current[titleField] as string : '')"
+        :placeholder="(current ? String(current[titleField]) : '')"
         class="hive-drop-down__search"
+        :class="{ valueNull:  modelValue === null}"
         @focusin="expand(), onFocusin(emit)"
         @focusout="collapse(), onFocusout(emit)"
         @keydown="onKeydown(emit, $event)"
@@ -101,7 +101,7 @@ watch(
         @keydown.esc="collapse"
         @keydown.up.prevent="setPrevActiveValue"
         @keydown.down.prevent="setNextActiveValue"
-        @input="onInput(emit, $event as string)"
+        @input="onSearch<string>(emit, $event as string)"
       />
       <i class="hive-drop-down__icon" :class="{ expand: isExpanded }" @mousedown="toggle" />
       <transition name="fade" appear>
@@ -166,6 +166,7 @@ $drop-down-padding: 0.5em 1em 0.5em 1em;
 
   &.expand {
     z-index: $drop-down-z_menu + 1;
+    border-color: var(--border-focus, $border-focus);
   }
 
   &.disable {
@@ -202,6 +203,10 @@ $drop-down-padding: 0.5em 1em 0.5em 1em;
         opacity: 0.5;
       }
     }
+
+    &.valueNull {
+      opacity: 0.8;
+    }
   }
 
   &__icon {
@@ -210,6 +215,7 @@ $drop-down-padding: 0.5em 1em 0.5em 1em;
     opacity: 0.7;
     background: none !important;
     font-style: normal;
+    // font-size: 11px;
 
     &:before {
       content: '▼';
@@ -223,6 +229,8 @@ $drop-down-padding: 0.5em 1em 0.5em 1em;
   }
 
   &__menu {
+    overflow-y: auto;
+
     &-item {
       border-top: 1px solid $drop-down-border-top;
       padding: $p-input !important;

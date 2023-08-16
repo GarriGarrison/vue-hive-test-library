@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue';
+import { Ref, computed, onMounted, ref } from 'vue';
 import WidgetWrapper from '@/WidgetWrapper.vue';
 import { HiveButton, HiveDialog, HiveLoader, HiveTextarea } from '.';
 import HiveInput from './components/hive-input/hive-input.vue';
@@ -35,62 +35,71 @@ let optionsTest: Option[] | undefined;
 
 setTimeout(() => {
   optionsTest = [
-  {
-    // key: 'key1',
-    // title: 'title3',
-    // value: 'value3',
-    valu: '2023',
-    titl: 't2023',
-    // key: '0',
-  },
-  {
-    // key: 'key2',
-    // title: 'title2',
-    // value: 'value2',
-    valu: '2022',
-    titl: 't2022',
-    // key: '1',
-  },
-  {
-    // key: 'key3',
-    // title: 'title1',
-    // value: 'value1',
-    valu: '2024',
-    titl: 't2024',
-    // key: '2',
-  },
-]
-})
+    {
+      // key: 'key1',
+      // title: 'title3',
+      // value: 'value3',
+      valu: '2023',
+      titl: 't2023',
+      // key: '0',
+    },
+    {
+      // key: 'key2',
+      // title: 'title2',
+      // value: 'value2',
+      valu: '2022',
+      titl: 't2022',
+      // key: '1',
+    },
+    {
+      // key: 'key3',
+      // title: 'title1',
+      // value: 'value1',
+      valu: '2024',
+      titl: 't2024',
+      // key: '2',
+    },
+  ];
+});
 
-const optionsObjectSort = //computed(() => optionsTest);
-[
-  {
-    // key: 'key1',
-    // title: 'title3',
-    // value: 'value3',
-    valu: '2023',
-    titl: 't2023',
-    // key: '0',
-  },
-  {
-    // key: 'key2',
-    // title: 'title2',
-    // value: 'value2',
-    valu: '2022',
-    titl: 't2022',
-    // key: '1',
-  },
-  {
-    // key: 'key3',
-    // title: 'title1',
-    // value: 'value1',
-    valu: '2024',
-    titl: 't2024',
-    // key: '2',
-  },
-]
+const optionsObjectSort =
+  //computed(() => optionsTest);
+  [
+    {
+      // key: 'key1',
+      // title: 'title3',
+      // value: 'value3',
+      valu: '2023',
+      titl: 't2023',
+      // key: '0',
+    },
+    {
+      // key: 'key2',
+      // title: 'title2',
+      // value: 'value2',
+      valu: '2022',
+      titl: 't2022',
+      // key: '1',
+    },
+    {
+      // key: 'key3',
+      // title: 'title1',
+      // value: 'value1',
+      valu: '2024',
+      titl: 't2024',
+      // key: '2',
+    },
+    {
+      // key: 'key1',
+      // title: 'title3',
+      // value: 'value3',
+      valu: '2023',
+      titl: 't2023',
+      // key: '0',
+    },
+  ];
 
-const optionsObject = [
+const optionsArray = [
   {
     key: 'key1',
     title: 'title1',
@@ -138,12 +147,47 @@ const optionsObject = [
   },
 ];
 
+// const dd4 = ref('74fd8aaa-e10a-4fd0-941b-6f6c7249003d')
+const dd4 = ref(null)
+
+const optionsObject = {
+  '74fd8aaa-e10a-4fd0-941b-6f6c7249003d': {
+    title: 'Российская Федерация',
+    id: '74fd8aaa-e10a-4fd0-941b-6f6c7249003d',
+    classifier_id: '2e72e478-2e35-437c-aeea-0d6da10138ae',
+  },
+  'cefa7ecc-9e64-425d-bfdb-2dc89a0c9c5f': {
+    title: 'Республика Беларусь',
+    id: 'cefa7ecc-9e64-425d-bfdb-2dc89a0c9c5f',
+    classifier_id: '2e72e478-2e35-437c-aeea-0d6da10138ae',
+  },
+};
+
+const maritalStatusList = [
+  {
+    id: 0,
+    title: 'холост',
+  },
+  {
+    id: 1,
+    title: 'женат',
+  },
+];
+const mm = ref()
+
+const date: Ref<Date | undefined> = ref()
+
 const yearStore = useYearStore();
 const yearList = computed(() => yearStore.years);
 
 onMounted(() => {
   yearStore.getYears();
-})
+});
+
+const handleSearch = (value: string) => {
+  console.log('val', value);
+  
+}
 </script>
 
 <template>
@@ -169,7 +213,7 @@ onMounted(() => {
       <!-- Textarea -->
       <widget-wrapper title="Textarea">
         {{ text }}
-        <hive-textarea v-model="text" resize-direction="both" :style="{ width: '300px' }"  disabled />
+        <hive-textarea v-model="text" resize-direction="both" :style="{ width: '300px' }" disabled />
       </widget-wrapper>
 
       <!-- Input -->
@@ -183,6 +227,7 @@ onMounted(() => {
         <hive-input v-model="num" type="number" :step="1" />
         <hive-input v-model="num" type="text" integer :min="5" :max="6" />
         <hive-input v-model="num" :mask="/^\d+$/" />
+        <!-- <hive-input v-model="date" type="date" /> -->
       </widget-wrapper>
 
       <!-- Modal -->
@@ -203,7 +248,8 @@ onMounted(() => {
             <hive-textarea v-model="text" resize-direction="both" :style="{ width: '300px' }" />
             <!-- <hive-drop-down v-model="dropdown" :options="optionsObject" :style="{ width: '300px' }" /> -->
             <!-- <hive-drop-down v-model="dropdown" :options="optionsObject" :style="{ width: '300px' }" menu-width="0px" /> -->
-            <hive-drop-down v-model="dd3" :options="yearList" title-field="title" value-field="value" />
+            <!-- <hive-drop-down v-model="dd3" :options="yearList" title-field="title" value-field="value" /> -->
+            <!-- <hive-drop-down v-model="mm" :options="yearList" title-field="title" value-field="id" /> -->
             <hive-button />
           </div>
 
@@ -215,14 +261,18 @@ onMounted(() => {
 
       <!-- DropDown -->
       <widget-wrapper title="DropDown">
-        {{ dropdown }}
-        <br />
         {{ dd3 }}
+        <br />
+        {{ dd4 }}
+        <br />
+        {{ mm }}
         <!-- <hive-drop-down v-model="dropdown" :options="optionsObject" :style="{ width: '300px' }" /> -->
         <!-- <hive-drop-down v-model="dd3" :options="optionsObjectSort" value-field="value" title-field="title" /> -->
         <!-- <hive-drop-down v-model="dd3" :options="optionsObjectSort" title-field="titl" value-field="valu" /> -->
-        <hive-drop-down v-model="dd3" :options="yearList" title-field="title" value-field="value" with-null />
+        <!-- <hive-drop-down v-model="dd3" :options="yearList" title-field="title" value-field="value" with-null /> -->
         <!-- <hive-drop-down v-model="dropdown" :options="options" /> -->
+         <hive-drop-down v-model="dd4" :options="optionsObjectSort" title-field="titl" value-field="valu" />
+         <!-- <hive-drop-down v-model="mm" :options="maritalStatusList" title-field="title" value-field="id" with-undefined @search="handleSearch" /> -->
       </widget-wrapper>
     </div>
   </div>

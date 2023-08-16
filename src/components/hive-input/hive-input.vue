@@ -38,12 +38,10 @@ const props = withDefaults(defineProps<Props>(), {
   step: 0.01,
 });
 
-type currentType = typeof props.modelValue;
+type CurrentType = typeof props.modelValue;
 
-type Emit = Mount & Unmount & Update<currentType> & Focusin & Focusout & Keydown & Input<currentType>;
-
+type Emit = Mount & Unmount & Update<CurrentType> & Focusin & Focusout & Keydown & Input<CurrentType>;
 const emit = defineEmits<Emit>();
-
 useOnMount(emit);
 
 const inputRef: Ref<HTMLInputElement | null> = ref(null);
@@ -54,7 +52,7 @@ const forceFocus = () => {
   }
 };
 
-const handleInput = (value: currentType) => {
+const handleInput = (value: CurrentType) => {
   onUpdateModelValue(emit, value);
   onInput(emit, value);
 };
@@ -79,13 +77,16 @@ export interface InputExpose {
 }
 
 defineExpose({ input: inputRef, forceFocus });
+
+// @ts-ignore
+const isDateTime = props.type === 'date' || props.type === 'time';
 </script>
 
 <template>
   <input
     ref="inputRef"
     class="hive-input"
-    :class="{ error: invalid }"
+    :class="{ error: invalid, datetime: isDateTime && !modelValue }"
     :style="style"
     :type="type"
     :value="modelValue"
@@ -127,6 +128,10 @@ defineExpose({ input: inputRef, forceFocus });
     border-color: var(--border-disabled, $border-disabled);
     opacity: 0.6;
     pointer-events: none;
+  }
+
+  &.datetime {
+    color: #3f3f3f80;
   }
 }
 </style>
